@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milky Way • black hole & planets + cosmic quiz</title>
+    <style>
+        /* RESET & GLOBAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', 'Arial', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #030514);
+            color: #f0eae4;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ---------- CONTINUOUS METEOR SHOWER ---------- */
+        .meteor-shower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .meteor {
+            position: absolute;
+            top: -10vh;
+            left: 0;
+            width: 2px;
+            height: 70px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(200, 230, 255, 0.2));
+            border-radius: 50%;
+            filter: drop-shadow(0 0 8px #b0e0ff) drop-shadow(0 0 15px #7ec8ff);
+            transform: rotate(45deg);
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        .meteor:nth-child(1) { left: 10%; width: 1px; height: 50px; animation-duration: 1.8s; animation-delay: 0s; }
+        .meteor:nth-child(2) { left: 25%; width: 2px; height: 80px; animation-duration: 2.5s; animation-delay: 0.7s; }
+        .meteor:nth-child(3) { left: 40%; width: 3px; height: 100px; animation-duration: 3.2s; animation-delay: 0.2s; }
+        .meteor:nth-child(4) { left: 55%; width: 1.5px; height: 60px; animation-duration: 2s; animation-delay: 1.2s; }
+        .meteor:nth-child(5) { left: 70%; width: 2px; height: 75px; animation-duration: 2.8s; animation-delay: 0.4s; }
+        .meteor:nth-child(6) { left: 85%; width: 2.5px; height: 90px; animation-duration: 3.5s; animation-delay: 1.5s; }
+        .meteor:nth-child(7) { left: 15%; width: 1.2px; height: 55px; animation-duration: 2.2s; animation-delay: 0.1s; }
+        .meteor:nth-child(8) { left: 48%; width: 2px; height: 85px; animation-duration: 3s; animation-delay: 0.9s; }
+        .meteor:nth-child(9) { left: 62%; width: 2.8px; height: 95px; animation-duration: 3.8s; animation-delay: 0.3s; }
+        .meteor:nth-child(10) { left: 78%; width: 1.8px; height: 65px; animation-duration: 2.4s; animation-delay: 1.8s; }
+        .meteor:nth-child(11) { left: 92%; width: 2px; height: 70px; animation-duration: 2.9s; animation-delay: 0.6s; }
+        .meteor:nth-child(12) { left: 33%; width: 2.2px; height: 88px; animation-duration: 3.3s; animation-delay: 1.1s; }
+        .meteor:nth-child(13) { left: 5%; width: 1.3px; height: 52px; animation-duration: 2.1s; animation-delay: 0.8s; }
+        .meteor:nth-child(14) { left: 73%; width: 2.6px; height: 92px; animation-duration: 3.6s; animation-delay: 1.4s; }
+        .meteor:nth-child(15) { left: 18%; width: 1.6px; height: 62px; animation-duration: 2.6s; animation-delay: 0.1s; }
+
+        @keyframes fall {
+            0% {
+                transform: translate(0, 0) rotate(45deg);
+                opacity: 0.9;
+            }
+            70% { opacity: 1; }
+            100% {
+                transform: translate(100vw, 100vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            background-image: 
+                radial-gradient(2px 2px at 15px 80px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 72px 430px, #f8f8ff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 280px 150px, #ffecb0, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 430px 700px, #ffe5b4, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 550px 250px, #b0e0ff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 800px 920px, #fff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 950px 500px, #ffe0c0, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 1200px 300px, #b0c4ff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+            backdrop-filter: blur(1px);
+            text-shadow: 0 0 12px #3a5f7a, 0 0 25px #0a1a2a;
+        }
+
+        h1, h2, h3 {
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #f3e7c8, #b7d9f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px #4f8bbf);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            word-spacing: 8px;
+        }
+
+        .subhead {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 3rem;
+            color: #cadfff;
+            text-shadow: 0 0 30px #00a6ff, 0 0 60px #0066aa;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .card {
+            background: rgba(8, 18, 38, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(120, 180, 255, 0.35);
+            border-radius: 35px;
+            padding: 2rem 2.2rem;
+            width: 300px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 2px rgba(70, 160, 255, 0.2) inset, 0 0 50px #0a3350;
+            transition: transform 0.2s ease;
+            color: #eef5ff;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #6eb0ff;
+            box-shadow: 0 30px 50px black, 0 0 30px #3f92d2;
+        }
+
+        .card h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px dashed #528fc6;
+            padding-bottom: 0.5rem;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card p {
+            font-size: 1.2rem;
+            line-height: 2;
+            margin: 0.8rem 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #2f587b;
+            text-shadow: 0 0 6px #1a3852;
+        }
+
+        .card p span {
+            font-weight: 600;
+            color: #ffde9e;
+            text-shadow: 0 0 15px #ffb347;
+        }
+
+        .earth-card {
+            background: rgba(10, 30, 50, 0.7);
+            border-color: #65b8ff;
+            width: 340px;
+        }
+
+        .planet-links {
+            margin-top: 4rem;
+        }
+
+        .planet-links h3 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 2.2rem;
+            -webkit-text-fill-color: transparent;
+            background: linear-gradient(135deg, #ffd9a3, #b2ecff);
+            -webkit-background-clip: text;
+        }
+
+        .link-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem 1.8rem;
+        }
+
+        .link-grid a {
+            text-decoration: none;
+            color: #e5f2ff;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            background: rgba(5, 18, 34, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid #3e7fb1;
+            box-shadow: 0 0 20px #0e3552;
+            transition: 0.25s;
+            letter-spacing: 1px;
+            text-shadow: 0 0 12px #5aa3d6;
+            display: inline-block;
+        }
+
+        .link-grid a:hover {
+            background: #0e2b44;
+            border-color: #ffd27f;
+            color: #fff5d6;
+            box-shadow: 0 0 30px #b07c2e, 0 0 60px #3d6c97;
+            transform: scale(1.05) translateY(-3px);
+        }
+
+        /* ---------- QUIZ SECTION ---------- */
+        .quiz-section {
+            margin-top: 5rem;
+        }
+
+        .quiz-section h3 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #ffe6b0, #b0e9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quiz-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .quiz-card {
+            background: rgba(8, 18, 38, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(150, 200, 255, 0.45);
+            border-radius: 35px;
+            padding: 1.8rem 1.8rem 2rem;
+            width: 360px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 215, 140, 0.2) inset, 0 0 40px #1b4b6e;
+            transition: 0.2s;
+        }
+
+        .quiz-card:hover {
+            border-color: #8fcbff;
+            box-shadow: 0 20px 40px black, 0 0 30px #4682b4;
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1.4rem;
+            color: #ffecb0;
+            text-shadow: 0 0 12px #ffa500;
+            line-height: 1.4;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-options li {
+            margin: 0.7rem 0;
+        }
+
+        .quiz-options input[type="radio"] {
+            display: none;
+        }
+
+        .quiz-options label {
+            display: block;
+            padding: 0.7rem 1.4rem;
+            background: rgba(18, 35, 60, 0.9);
+            border: 1px solid #3f6b9c;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 1.1rem;
+            color: #d0e5ff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .quiz-options label:hover {
+            background: #1e3f62;
+            border-color: #ffb86b;
+            transform: translateX(6px);
+        }
+
+        .quiz-options input[type="radio"]:checked + label {
+            background: #2f5a88;
+            border-color: #ffd966;
+            box-shadow: 0 0 22px #7cb9ff, 0 0 40px #3d6e9e;
+            color: white;
+            font-weight: 500;
+        }
+
+        .saying {
+            margin-top: 1.5rem;
+            padding: 1rem 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 5px solid #ffd966;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #fff6e0;
+            text-shadow: 0 0 15px #ffb75e;
+            border-radius: 0 25px 25px 0;
+            min-height: 80px;
+            word-break: break-word;
+            box-shadow: 0 0 20px #1d445e;
+            backdrop-filter: blur(2px);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 4rem;
+            font-size: 1.1rem;
+            color: #9bc2e0;
+            text-shadow: 0 0 10px #0e3853;
+        }
+
+        @media (max-width: 650px) {
+            h1 { font-size: 2.5rem; }
+            .card { width: 90%; }
+            .quiz-card { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="meteor-shower">
+        <div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div>
+        <div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div>
+        <div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div><div class="meteor"></div>
+    </div>
+    <div class="stars"></div>
+
+    <div class="content">
+        <h1>✦ MILKY WAY ARCHIVE ✦</h1>
+        <div class="subhead">the heart of darkness • worlds without end</div>
+
+        <!-- info cards -->
+        <div class="info-grid">
+            <div class="card">
+                <h2>⚫ SAGITTARIUS A*</h2>
+                <p><span>diameter</span> ~30 million km</p>
+                <p><span>gravity</span> 1.5×10¹² m/s² (extreme)</p>
+                <p><span>mass</span> 4.3 million M☉</p>
+                <p><span>event horizon</span> 24 million km across</p>
+            </div>
+            <div class="card">
+                <h2>🌌 MILKY WAY</h2>
+                <p><span>star systems</span> ~200 billion</p>
+                <p><span>planets (est.)</span> >100 billion</p>
+                <p><span>habitable zone</span> ~10 billion</p>
+                <p><span>age</span> 13.6 billion years</p>
+            </div>
+            <div class="card earth-card">
+                <h2>🌍 EARTH (HOME)</h2>
+                <p><span>diameter</span> 12,742 km</p>
+                <p><span>gravity</span> 9.807 m/s²</p>
+                <p><span>mass</span> 5.97 × 10²⁴ kg</p>
+                <p><span>distance from Sun</span> 1 AU (150 M km)</p>
+                <p><span>moons</span> 1 (Luna)</p>
+                <p><span>atmosphere</span> N₂, O₂, Ar</p>
+            </div>
+        </div>
+
+        <!-- planetary links -->
+        <div class="planet-links">
+            <h3>✦ explore the neighbours ✦</h3>
+            <div class="link-grid">
+                <a href="https://arpanroy2.github.io/p1/" target="_blank" rel="noopener">☿ Mercury</a>
+                <a href="https://arpanroy2.github.io/p2/" target="_blank" rel="noopener">♀ Venus</a>
+                <a href="https://arpanroy2.github.io/p3/" target="_blank" rel="noopener">🌍 Earth</a>
+                <a href="https://arpanroy2.github.io/p4/" target="_blank" rel="noopener">♂ Mars</a>
+                <a href="https://arpanroy2.github.io/p5/" target="_blank" rel="noopener">♃ Jupiter</a>
+                <a href="https://arpanroy2.github.io/p6/" target="_blank" rel="noopener">♄ Saturn</a>
+                <a href="https://arpanroy2.github.io/p7/" target="_blank" rel="noopener">⛢ Uranus</a>
+                <a href="https://arpanroy2.github.io/p8/" target="_blank" rel="noopener">♆ Neptune</a>
+                <a href="https://arpanroy2.github.io/p9/" target="_blank" rel="noopener">♇ Pluto</a>
+                <a href="https://arpanroy2.github.io/p10/" target="_blank" rel="noopener">☀ Sun</a>
+            </div>
+        </div>
+
+        <!-- ========== QUIZ SECTION: 20 MCQs with sayings ========== -->
+        <div class="quiz-section">
+            <h3>✦ cosmic quiz ✦</h3>
+            <div id="quiz-container" class="quiz-grid"></div>
+        </div>
+
+        <div class="footer-note">
+            <!-- empty as before -->
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 20 questions, each with 4 options, correct index (0-based), and a saying ----------
+            const questions = [
+                {
+                    q: "What is the name of the supermassive black hole at the center of the Milky Way?",
+                    options: ["M87*", "Sagittarius A*", "Cygnus X-1", "Andromeda"],
+                    correct: 1,
+                    saying: "“The universe is not only stranger than we imagine, it is stranger than we can imagine.” — J.B.S. Haldane"
+                },
+                {
+                    q: "Approximately what is the diameter of Sagittarius A*?",
+                    options: ["30 million km", "30 thousand km", "30 billion km", "30 light-years"],
+                    correct: 0,
+                    saying: "“Look up at the stars and not down at your feet. Try to make sense of what you see.” — Stephen Hawking"
+                },
+                {
+                    q: "What is the mass of Sagittarius A* in solar masses?",
+                    options: ["4.3 million", "4.3 billion", "4.3 thousand", "4.3 trillion"],
+                    correct: 0,
+                    saying: "“We are a way for the cosmos to know itself.” — Carl Sagan"
+                },
+                {
+                    q: "How many star systems (approx.) are in the Milky Way?",
+                    options: ["200 billion", "100 billion", "1 trillion", "50 billion"],
+                    correct: 0,
+                    saying: "“The nitrogen in our DNA, the calcium in our teeth, the iron in our blood — all were made in the hearts of stars.”"
+                },
+                {
+                    q: "Estimated number of planets in the Milky Way?",
+                    options: [">100 billion", "~10 billion", "~1 trillion", "~500 million"],
+                    correct: 0,
+                    saying: "“Somewhere, something incredible is waiting to be known.” — Carl Sagan"
+                },
+                {
+                    q: "Approximately how many habitable-zone planets are estimated?",
+                    options: ["~10 billion", "~100 billion", "~1 billion", "~500 million"],
+                    correct: 0,
+                    saying: "“The cosmos is within us. We are made of star-stuff.” — Carl Sagan"
+                },
+                {
+                    q: "What is the age of the Milky Way?",
+                    options: ["13.6 billion years", "4.5 billion years", "10 billion years", "20 billion years"],
+                    correct: 0,
+                    saying: "“We are the universe’s attempt to understand itself.”"
+                },
+                {
+                    q: "Earth's diameter is approximately:",
+                    options: ["12,742 km", "6,371 km", "12,800 km", "10,000 km"],
+                    correct: 0,
+                    saying: "“The Earth is a small stage in a vast cosmic arena.”"
+                },
+                {
+                    q: "Earth's gravity in m/s²:",
+                    options: ["9.807", "9.8", "10.2", "8.9"],
+                    correct: 0,
+                    saying: "“The ground beneath your feet is a miracle.”"
+                },
+                {
+                    q: "Earth's mass (kg):",
+                    options: ["5.97 × 10²⁴", "5.97 × 10²²", "5.97 × 10²⁶", "5.97 × 10²⁰"],
+                    correct: 0,
+                    saying: "“You are held by a world that spins through the immensity of space.”"
+                },
+                {
+                    q: "Earth's distance from the Sun in AU:",
+                    options: ["1 AU", "1.5 AU", "0.8 AU", "1.2 AU"],
+                    correct: 0,
+                    saying: "“A mote of dust suspended in a sunbeam.” — Carl Sagan"
+                },
+                {
+                    q: "How many moons does Earth have?",
+                    options: ["1", "2", "0", "3"],
+                    correct: 0,
+                    saying: "“The Moon is a faithful companion, a silver echo of our planet.”"
+                },
+                {
+                    q: "Main components of Earth's atmosphere:",
+                    options: ["N₂, O₂, Ar", "O₂, CO₂, N₂", "N₂, O₂, CO₂", "O₂, He, Ar"],
+                    correct: 0,
+                    saying: "“Breathe deep — you are tasting the sky.”"
+                },
+                {
+                    q: "Diameter of Sagittarius A*'s event horizon?",
+                    options: ["24 million km", "12 million km", "30 million km", "48 million km"],
+                    correct: 0,
+                    saying: "“Even darkness has a boundary — and beyond lies the unknown.”"
+                },
+                {
+                    q: "Which planet is closest to the Sun?",
+                    options: ["Mercury", "Venus", "Earth", "Mars"],
+                    correct: 0,
+                    saying: "“To be the closest to the fire takes courage.”"
+                },
+                {
+                    q: "Which planet is known as the Red Planet?",
+                    options: ["Mars", "Jupiter", "Venus", "Mercury"],
+                    correct: 0,
+                    saying: "“Rusty world, you hold the dreams of future footsteps.”"
+                },
+                {
+                    q: "Which planet has the most moons in our solar system?",
+                    options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+                    correct: 0,   // Jupiter (as of now 79+), but we'll keep it simple
+                    saying: "“A court of countless moons dances around the king of planets.”"
+                },
+                {
+                    q: "Which is the largest planet in the solar system?",
+                    options: ["Jupiter", "Saturn", "Neptune", "Earth"],
+                    correct: 0,
+                    saying: "“Greatness is measured in gravity and grace.”"
+                },
+                {
+                    q: "Which planet is famous for its prominent rings?",
+                    options: ["Saturn", "Jupiter", "Uranus", "Neptune"],
+                    correct: 0,
+                    saying: "“Jewel of the heavens, wearing a crown of ice and dust.”"
+                },
+                {
+                    q: "What is the gravity of Sagittarius A* (approx)?",
+                    options: ["1.5×10¹² m/s²", "9.8 m/s²", "274 m/s²", "1.5×10⁸ m/s²"],
+                    correct: 0,
+                    saying: "“Gravity: the universe’s way of holding onto itself.”"
+                }
+            ];
+
+            const container = document.getElementById('quiz-container');
+            if (!container) return;
+
+            // clear any placeholder (if any)
+            container.innerHTML = '';
+
+            // loop and build quiz cards
+            questions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card';
+                card.setAttribute('data-qid', idx);
+
+                // question
+                const qDiv = document.createElement('div');
+                qDiv.className = 'quiz-question';
+                qDiv.textContent = `${idx+1}. ${q.q}`;
+                card.appendChild(qDiv);
+
+                // options list
+                const optList = document.createElement('ul');
+                optList.className = 'quiz-options';
+
+                q.options.forEach((opt, optIdx) => {
+                    const li = document.createElement('li');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q${idx}`;
+                    radio.value = optIdx;
+                    radio.id = `q${idx}_opt${optIdx}`;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `q${idx}_opt${optIdx}`;
+                    label.textContent = opt;
+
+                    // event listener: when clicked, handle answer
+                    radio.addEventListener('change', function(e) {
+                        // get the saying div inside this card
+                        const sayingDiv = card.querySelector('.saying');
+                        if (!sayingDiv) return;
+
+                        if (this.checked) {
+                            const selectedVal = parseInt(this.value);
+                            if (selectedVal === q.correct) {
+                                sayingDiv.textContent = `✨ ${q.saying}`;
+                                // optional style hint
+                                sayingDiv.style.borderLeftColor = '#7CFC00';
+                            } else {
+                                sayingDiv.textContent = '💫 Not quite — stardust remembers, try another.';
+                                sayingDiv.style.borderLeftColor = '#ffae42';
+                            }
+                        }
+                    });
+
+                    li.appendChild(radio);
+                    li.appendChild(label);
+                    optList.appendChild(li);
+                });
+
+                card.appendChild(optList);
+
+                // saying placeholder
+                const sayingDiv = document.createElement('div');
+                sayingDiv.className = 'saying';
+                sayingDiv.textContent = '🌙 select an answer...';
+                card.appendChild(sayingDiv);
+
+                container.appendChild(card);
+            });
+        })();
+    </script>
+</body>
+</html>
